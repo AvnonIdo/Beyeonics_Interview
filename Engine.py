@@ -9,3 +9,9 @@ class Engine:
     def get_position(self):
         return 0
 
+    def is_valid_position(self, pos):
+        return True
+
+    def move(self, pos):
+        return
+
