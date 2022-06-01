@@ -3,13 +3,15 @@ import Engine
 
 # The machine itself
 class Unit:
-    def __init__(self, engine: Engine.Engine, camera):
+    def __init__(self, engine: Engine.Engine):
         self.engine = engine
-        self.camera = camera
-        self.calibrated_properties = []
+        self.devices = []
 
     def reset(self):
         self.engine.reset()
+
+    def add_device(self, device):
+        self.devices.append(device)
 
     def get_position(self):
         return self._engine_position_to_unit_position(self.engine.get_position())
@@ -44,11 +46,18 @@ class Unit:
         return pos
 
 
-# For each property that should be calibrated we will create a procedure that inherits from this class
-class CalibrationProcedure:
+# For each device that fits on the unit (camera, sensors, ect.) we will create an appropriate class that inherits from this
+class UnitDevice:
     def __init__(self, unit: Unit):
         self.unit = unit
+        self.calibrated_properties = []
+
+
+# For each property of a UnitDevice that should be calibrated we will create a procedure that inherits from this class
+class CalibrationProcedure:
+    def __init__(self, device: UnitDevice):
+        self.device = device
         return
 
     def calibrate(self):
-        self.unit.calibrated_properties.append(self.__class__.__name__)
+        self.device.calibrated_properties.append(self.__class__.__name__)
