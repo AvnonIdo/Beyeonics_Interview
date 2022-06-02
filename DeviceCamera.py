@@ -20,7 +20,7 @@ class CameraFocusCalibration(Unit.CalibrationProcedure):
         super().__init__(device)
 
     def calibrate(self):
-        position = []
+        positions = []
         optimal_encoder_values = []
         self.device.unit.reset()
         while self.device.unit.is_valid_position_relative(-50):
@@ -28,17 +28,18 @@ class CameraFocusCalibration(Unit.CalibrationProcedure):
 
         encoder_value = self.device.camera.get_min_encoder_value()
 
-        position.append(self.device.unit.get_position())
+        positions.append(self.device.unit.get_position())
         encoder_value = self._find_optimal_encoder_value(encoder_value)
         optimal_encoder_values.append(encoder_value)
 
         while self.device.unit.is_valid_position_relative(50):
             self.device.unit.move_relative(50)
-            position.append(self.device.unit.get_position())
+            positions.append(self.device.unit.get_position())
             encoder_value = self._find_optimal_encoder_value(encoder_value)
             optimal_encoder_values.append(encoder_value)
 
-        self.device.position_to_encoder_function = polynomial.Polynomial.fit(position, optimal_encoder_values, self.deg)
+        self.device.position_to_encoder_function = polynomial.Polynomial.fit(positions, optimal_encoder_values, self.deg)
+        self.device.calibrated_properties.append("Camera Focus")
         return self.device.position_to_encoder_function
 
 
